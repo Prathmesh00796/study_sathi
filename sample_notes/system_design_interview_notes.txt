@@ -1,0 +1,26 @@
+# System Design & Scalable Architecture Study Notes
+
+## 1. CAP Theorem and PACELC
+The CAP theorem states that a distributed system can guarantee at most two of the following three properties:
+- **Consistency (C):** Every read receives the most recent write or an error.
+- **Availability (A):** Every request receives a non-error response, without guaranteeing it contains the most recent write.
+- **Partition Tolerance (P):** The system continues to operate despite an arbitrary number of messages being dropped or delayed by the network.
+
+PACELC extends CAP: In case of Partition (P), choose between Availability (A) and Consistency (C); Else (E), choose between Latency (L) and Consistency (C).
+
+## 2. Caching Strategies
+Caching stores frequently accessed data in high-speed in-memory layers like Redis or Memcached:
+- **Cache-Aside (Lazy Loading):** The application first queries the cache. On miss, it reads from the database, writes the result to cache, and returns it.
+- **Write-Through:** Data is written to the cache and the backing database simultaneously.
+- **Write-Behind (Write-Back):** Data is written to the cache immediately, and asynchronously flushed to the database in batches.
+- **Eviction Policies:** LRU (Least Recently Used), LFU (Least Frequently Used), FIFO (First In First Out).
+
+## 3. Database Scaling & Sharding
+- **Vertical Scaling (Scale-Up):** Adding more CPU, RAM, or SSD storage to a single server instance.
+- **Horizontal Scaling (Scale-Out):** Distributing data across multiple independent database nodes.
+- **Consistent Hashing:** Minimizes key redistribution when nodes are added or removed in a distributed hash ring.
+
+## 4. Message Queues & Event-Driven Systems
+Decoupling services using asynchronous message brokers like RabbitMQ, Apache Kafka, or AWS SQS:
+- **At-least-once Delivery:** Messages may be duplicated; consumers must be idempotent.
+- **Dead Letter Queues (DLQ):** Captures poisoned messages that fail repeated processing attempts.

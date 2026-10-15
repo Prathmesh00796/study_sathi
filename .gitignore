@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# Data & ChromaDB
+data/chroma_db/
+data/studysathi.db
+data/uploads/
+*.sqlite3
+
+# Pytest & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini

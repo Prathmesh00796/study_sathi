@@ -1,0 +1,37 @@
+# Retrieval-Augmented Generation (RAG) & GenAI Architecture Handbook
+
+## 1. Introduction to RAG Systems
+Retrieval-Augmented Generation (RAG) is an architectural pattern that enhances Large Language Models (LLMs) by fetching dynamic, authoritative external knowledge from a vector database before synthesizing an answer. 
+Standard LLMs suffer from knowledge cutoffs and hallucinations. RAG addresses this by separating knowledge storage (the vector database) from reasoning capability (the foundation model).
+
+## 2. Text Ingestion and Chunking Strategies
+Before documents can be embedded, they must be processed into manageable pieces called chunks:
+- **Chunk Size:** Defines the number of characters or tokens per passage (typically between 500 and 1000 characters). Too large chunks dilute semantic specificity; too small chunks lose surrounding context.
+- **Chunk Overlap:** A sliding boundary margin (typically 100 to 200 characters) that ensures semantic sentences spanning the boundary between two chunks are not severed.
+- **Recursive Character Splitting:** Splits hierarchically on paragraphs (`\n\n`), newlines (`\n`), periods (`.`), and spaces to preserve natural grammatical structure.
+
+## 3. High-Dimensional Vector Embeddings
+An embedding model converts natural language text into a dense vector of floating-point numbers (e.g., 384, 768, or 1536 dimensions).
+- In vector space, words and concepts with similar semantic meanings are positioned in close proximity.
+- **Distance Metrics:**
+  - **Cosine Similarity:** Measures the cosine of the angle between two vectors. Values range from -1 to 1 (or 0 to 1 for normalized vectors). It is invariant to text length.
+  - **Euclidean Distance (L2):** Measures straight-line geometric distance.
+  - **Dot Product:** Product of vector magnitudes and angle. Equivalent to cosine similarity when vectors are unit-normalized.
+
+## 4. Vector Databases & Indexing
+Vector databases like ChromaDB, FAISS, and Qdrant store high-dimensional vectors alongside rich document metadata.
+- **HNSW (Hierarchical Navigable Small World):** A multi-layer graph-based indexing algorithm providing logarithmic search time complexity O(log N) for Approximate Nearest Neighbor (ANN) search.
+- **Metadata Filtering:** Allows queries to be restricted by document source, author, department, or creation date before or after vector distance ranking.
+
+## 5. Prompt Augmentation and Hallucination Reduction
+Once the top-K chunks are retrieved from ChromaDB, they are injected into the LLM system prompt as verified grounding context:
+- System prompt instructions mandate that claims must cite their source chunks: `[Doc N: filename, Page X]`.
+- If the retrieved context is insufficient, the model is instructed to explicitly acknowledge knowledge gaps rather than invent facts.
+- **Faithfulness Metrics:** Compare synthesized claims against the retrieved context to verify factual grounding.
+
+## 6. Evaluation Frameworks for GenAI
+Production RAG systems require continuous quantitative evaluation:
+- **Hit Rate:** Proportion of queries where at least one ground-truth document or keyword appears in top-K retrieved passages.
+- **Mean Reciprocal Rank (MRR):** Calculates the average reciprocal rank of the first relevant passage retrieved.
+- **Precision@K:** Ratio of relevant chunks among all K retrieved chunks.
+- **Answer Relevancy:** Measures whether the generated output directly answers the user's inquiry.
